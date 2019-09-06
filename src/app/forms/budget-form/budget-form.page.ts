@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 
 import { BudgetEntry } from 'src/app/entity/budget-entry';
 import { BudgetService } from '../../services/budget.service';
-import { NavController } from '@ionic/angular';
+import { NavController, Events } from '@ionic/angular';
 
 @Component({
   selector: 'app-budget-form',
@@ -14,7 +14,8 @@ export class BudgetFormPage implements OnInit {
   public budget: BudgetEntry;
 
   constructor(private navCtrl: NavController,
-              private budgetService: BudgetService) { }
+              private budgetService: BudgetService,
+              private events: Events) { }
 
   ngOnInit() {
     this.budget = new BudgetEntry((new Date()).getTime());
@@ -26,9 +27,9 @@ export class BudgetFormPage implements OnInit {
 
   validateForm() {
 
-    this.budgetService.addEntry(this.budget);
-
-    this.navCtrl.back();
+    this.budgetService.addEntry(this.budget, ()=> {
+      this.navCtrl.back();
+    });
   }
 
 }

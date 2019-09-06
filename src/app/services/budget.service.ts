@@ -1,5 +1,7 @@
 import { BudgetEntry } from '../entity/budget-entry';
 import { Injectable } from '@angular/core';
+import { Storage } from '@ionic/storage';
+
 
 @Injectable({
   providedIn: 'root'
@@ -8,23 +10,25 @@ export class BudgetService {
 
   private budgetList: Array<BudgetEntry> = [];
 
-  constructor() {
+  private static COLLECTION_NAME = "budget";
+
+  constructor(private storage: Storage) {
     console.log('construction du service');
-    // Ajout d'une ligne au tableau des dépenses
-    const entry = new BudgetEntry(
-      (new Date()).getTime(),
-      {label: 'Loyer', category: 'Maison', amount: 700, createdAt: new Date()}
-    );
-
-    this.budgetList.push(entry);
    }
 
-   public getBudgetList(): Array<BudgetEntry> {
-     console.log(this.budgetList);
-     return this.budgetList;
+   public getBudgetList(): Promise<any> {
+     return this.storage.get(BudgetService.COLLECTION_NAME);  
    }
 
-   public addEntry(infos: BudgetEntry) {
-     this.budgetList.push(infos);
-   }
+   public addEntry(infos: BudgetEntry, callback) {
+     this.storage.get(BudgetService.COLLECTION_NAME)
+      .then(
+        (data)=> {
+          if(!data) data = [];
+          data.push(infos);
+          this.storage.set(BudgetService.COLLECTION_NAME, data);
+          callback();
+        }
+      )
+    }
 }
