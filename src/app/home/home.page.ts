@@ -1,3 +1,5 @@
+import { BudgetEntry } from '../entity/budget-entry';
+import { BudgetService } from '../services/budget.service';
 import { Component } from '@angular/core';
 
 @Component({
@@ -7,6 +9,12 @@ import { Component } from '@angular/core';
 })
 export class HomePage {
 
-  constructor() {}
+  public budgetList: Array<BudgetEntry> = [];
+
+  constructor(private budgetService: BudgetService) {}
+
+  ionDidEnter() {
+    this.budgetList = this.budgetService.getBudgetList();
+  }
 
 }
